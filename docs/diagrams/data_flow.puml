@@ -1,0 +1,55 @@
+@startuml Data Flow
+!theme plain
+skinparam linetype ortho
+
+actor User
+participant "MovieListScreen" as UI
+participant "MovieListViewModel" as VM
+participant "GetPopularMoviesUseCase" as GetMovies
+participant "RefreshMoviesUseCase" as Refresh
+participant "MovieRepository" as Repo
+participant "MovieApi" as API
+participant "MovieDao" as DAO
+participant "NetworkMonitor" as Network
+
+== Initial Load ==
+User -> UI: Open app
+UI -> VM: Initialize
+VM -> GetMovies: Execute
+GetMovies -> Repo: getPopularMovies()
+Repo -> Network: isAvailable()
+alt Network Available
+    Repo -> API: getPopularMovies()
+    API -> Repo: Return movies
+    Repo -> DAO: cacheMovies()
+else Network Unavailable
+    Repo -> DAO: getCachedMovies()
+end
+Repo -> GetMovies: Return movies
+GetMovies -> VM: Update state
+VM -> UI: Display movies
+
+== Pull to Refresh ==
+User -> UI: Pull to refresh
+UI -> VM: onRefresh()
+VM -> Refresh: Execute
+Refresh -> Repo: refreshMovies()
+Repo -> Network: isAvailable()
+alt Network Available
+    Repo -> API: getPopularMovies()
+    API -> Repo: Return movies
+    Repo -> DAO: cacheMovies()
+else Network Unavailable
+    Repo -> VM: Error state
+    VM -> UI: Show error
+end
+
+== Network State Change ==
+Network -> VM: Network state change
+alt Network Available
+    VM -> Refresh: Execute
+else Network Unavailable
+    VM -> UI: Show offline state
+end
+
+@enduml 

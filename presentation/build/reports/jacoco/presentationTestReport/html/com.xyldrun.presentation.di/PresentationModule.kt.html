@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PresentationModule.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.di</a> &gt; <span class="el_source">PresentationModule.kt</span></div><h1>PresentationModule.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.di
+
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.xyldrun.core.util.NetworkMonitor
+import com.xyldrun.domain.usecase.GetMovieDetailsUseCase
+import com.xyldrun.domain.usecase.GetPopularMoviesUseCase
+import com.xyldrun.domain.usecase.RefreshMoviesUseCase
+import com.xyldrun.presentation.moviedetail.MovieDetailViewModel
+import com.xyldrun.presentation.movielist.MovieListViewModel
+import com.xyldrun.presentation.ui.common.MovieImageLoader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
+
+<span class="nc" id="L19">val presentationModule = module {</span>
+<span class="nc" id="L20">    single { ProcessLifecycleOwner.get().lifecycleScope }</span>
+    
+<span class="nc" id="L22">    single { MovieImageLoader(androidContext()) }</span>
+
+<span class="nc" id="L24">    single { CoroutineScope(SupervisorJob() + Dispatchers.Main) }</span>
+
+<span class="nc" id="L26">    viewModel {</span>
+<span class="nc" id="L27">        MovieListViewModel(</span>
+<span class="nc" id="L28">            getPopularMovies = get(),</span>
+<span class="nc" id="L29">            refreshMovies = get(),</span>
+<span class="nc" id="L30">            networkMonitor = get()</span>
+        )
+    }
+
+<span class="nc" id="L34">    viewModel { parameters -&gt;</span>
+<span class="nc" id="L35">        MovieDetailViewModel(</span>
+<span class="nc" id="L36">            getMovieDetailsUseCase = get(),</span>
+<span class="nc" id="L37">            movieId = parameters.get()</span>
+        )
+    }
+<span class="nc" id="L40">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LottieAnimations.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.ui.common</a> &gt; <span class="el_source">LottieAnimations.kt</span></div><h1>LottieAnimations.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.ui.common
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.*
+
+@Composable
+fun EmptyStateAnimation(
+    message: String,
+<span class="nc bnc" id="L17" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L18" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L19">    Column(</span>
+<span class="nc" id="L20">        modifier = modifier.fillMaxWidth(),</span>
+<span class="nc" id="L21">        horizontalAlignment = Alignment.CenterHorizontally</span>
+    ) {
+<span class="nc" id="L23">        val composition by rememberLottieComposition(</span>
+<span class="nc" id="L24">            LottieCompositionSpec.Asset(&quot;animations/empty_box.json&quot;)</span>
+        )
+<span class="nc" id="L26">        val progress by animateLottieCompositionAsState(</span>
+<span class="nc" id="L27">            composition = composition,</span>
+<span class="nc" id="L28">            iterations = LottieConstants.IterateForever</span>
+        )
+        
+<span class="nc" id="L31">        LottieAnimation(</span>
+<span class="nc" id="L32">            composition = composition,</span>
+<span class="nc" id="L33">            progress = { progress },</span>
+<span class="nc" id="L34">            modifier = Modifier.size(200.dp)</span>
+        )
+        
+<span class="nc" id="L37">        Spacer(modifier = Modifier.height(16.dp))</span>
+        
+<span class="nc" id="L39">        Text(</span>
+<span class="nc" id="L40">            text = message,</span>
+<span class="nc" id="L41">            style = MaterialTheme.typography.bodyLarge,</span>
+<span class="nc" id="L42">            textAlign = TextAlign.Center,</span>
+<span class="nc" id="L43">            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)</span>
+        )
+<span class="nc" id="L45">    }</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">}</span>
+
+@Composable
+fun ErrorAnimation(
+    message: String,
+<span class="nc bnc" id="L51" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L52" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L53">    Column(</span>
+<span class="nc" id="L54">        modifier = modifier.fillMaxWidth(),</span>
+<span class="nc" id="L55">        horizontalAlignment = Alignment.CenterHorizontally</span>
+    ) {
+<span class="nc" id="L57">        val composition by rememberLottieComposition(</span>
+<span class="nc" id="L58">            LottieCompositionSpec.Asset(&quot;animations/error.json&quot;)</span>
+        )
+<span class="nc" id="L60">        val progress by animateLottieCompositionAsState(</span>
+<span class="nc" id="L61">            composition = composition,</span>
+<span class="nc" id="L62">            iterations = 1</span>
+        )
+        
+<span class="nc" id="L65">        LottieAnimation(</span>
+<span class="nc" id="L66">            composition = composition,</span>
+<span class="nc" id="L67">            progress = { progress },</span>
+<span class="nc" id="L68">            modifier = Modifier.size(200.dp)</span>
+        )
+        
+<span class="nc" id="L71">        Spacer(modifier = Modifier.height(16.dp))</span>
+        
+<span class="nc" id="L73">        Text(</span>
+<span class="nc" id="L74">            text = message,</span>
+<span class="nc" id="L75">            style = MaterialTheme.typography.bodyLarge,</span>
+<span class="nc" id="L76">            textAlign = TextAlign.Center,</span>
+<span class="nc" id="L77">            color = MaterialTheme.colorScheme.error</span>
+        )
+<span class="nc" id="L79">    }</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">}</span>
+
+@Composable
+fun LoadingAnimation(
+<span class="nc bnc" id="L84" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L85" title="All 12 branches missed.">) {</span>
+<span class="nc" id="L86">    val composition by rememberLottieComposition(</span>
+<span class="nc" id="L87">        LottieCompositionSpec.Asset(&quot;animations/loading.json&quot;)</span>
+    )
+<span class="nc" id="L89">    val progress by animateLottieCompositionAsState(</span>
+<span class="nc" id="L90">        composition = composition,</span>
+<span class="nc" id="L91">        iterations = LottieConstants.IterateForever</span>
+    )
+    
+<span class="nc bnc" id="L94" title="All 2 branches missed.">    LottieAnimation(</span>
+<span class="nc" id="L95">        composition = composition,</span>
+<span class="nc" id="L96">        progress = { progress },</span>
+<span class="nc" id="L97">        modifier = modifier.size(200.dp)</span>
+    )
+<span class="nc bnc" id="L99" title="All 2 branches missed.">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Movie App</string>
+    
+    <!-- Error messages -->
+    <string name="error_network">Network error occurred. Please check your internet connection.</string>
+    <string name="error_database">Database error occurred. Please try again.</string>
+    <string name="error_unknown">An unknown error occurred. Please try again.</string>
+    <string name="error_no_internet">No internet connection available</string>
+    
+    <!-- Actions -->
+    <string name="button_retry">Retry</string>
+    <string name="button_back">Back</string>
+    
+    <!-- Content descriptions -->
+    <string name="cd_movie_poster">Movie poster for %1$s</string>
+    <string name="cd_movie_backdrop">Movie backdrop for %1$s</string>
+    <string name="cd_broken_image">Image not available</string>
+    
+    <!-- Movie details -->
+    <string name="movie_rating">★ %1$.1f</string>
+    <string name="movie_votes">(%1$d votes)</string>
+    <string name="movie_release_date">Released: %1$s</string>
+    
+    <!-- Loading states -->
+    <string name="loading_more">Loading more movies…</string>
+    <string name="no_more_movies">No more movies available</string>
+    
+    <!-- Navigation titles -->
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>

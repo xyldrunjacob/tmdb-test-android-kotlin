@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Animations.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.ui.common</a> &gt; <span class="el_source">Animations.kt</span></div><h1>Animations.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.ui.common
+
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+
+@Composable
+fun FadeInOutAnimation(
+    visible: Boolean,
+<span class="nc bnc" id="L13" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+    content: @Composable AnimatedVisibilityScope.() -&gt; Unit
+<span class="nc bnc" id="L15" title="All 24 branches missed.">) {</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">    AnimatedVisibility(</span>
+<span class="nc" id="L17">        visible = visible,</span>
+<span class="nc" id="L18">        enter = fadeIn(</span>
+<span class="nc" id="L19">            animationSpec = tween(</span>
+<span class="nc" id="L20">                durationMillis = 300,</span>
+<span class="nc" id="L21">                easing = FastOutSlowInEasing</span>
+            )
+        ),
+<span class="nc" id="L24">        exit = fadeOut(</span>
+<span class="nc" id="L25">            animationSpec = tween(</span>
+<span class="nc" id="L26">                durationMillis = 300,</span>
+<span class="nc" id="L27">                easing = FastOutSlowInEasing</span>
+            )
+        ),
+<span class="nc" id="L30">        modifier = modifier,</span>
+<span class="nc" id="L31">        content = content</span>
+    )
+<span class="nc bnc" id="L33" title="All 2 branches missed.">}</span>
+
+@Composable
+fun SlideInAnimation(
+    visible: Boolean,
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+    content: @Composable AnimatedVisibilityScope.() -&gt; Unit
+<span class="nc bnc" id="L40" title="All 24 branches missed.">) {</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    AnimatedVisibility(</span>
+<span class="nc" id="L42">        visible = visible,</span>
+<span class="nc" id="L43">        enter = slideInVertically(</span>
+<span class="nc" id="L44">            initialOffsetY = { it },</span>
+<span class="nc" id="L45">            animationSpec = spring(</span>
+<span class="nc" id="L46">                dampingRatio = Spring.DampingRatioMediumBouncy,</span>
+<span class="nc" id="L47">                stiffness = Spring.StiffnessLow</span>
+            )
+<span class="nc" id="L49">        ) + fadeIn(),</span>
+<span class="nc" id="L50">        exit = slideOutVertically(</span>
+<span class="nc" id="L51">            targetOffsetY = { it },</span>
+<span class="nc" id="L52">            animationSpec = spring(</span>
+<span class="nc" id="L53">                dampingRatio = Spring.DampingRatioMediumBouncy,</span>
+<span class="nc" id="L54">                stiffness = Spring.StiffnessLow</span>
+            )
+<span class="nc" id="L56">        ) + fadeOut(),</span>
+<span class="nc" id="L57">        modifier = modifier,</span>
+<span class="nc" id="L58">        content = content</span>
+    )
+<span class="nc bnc" id="L60" title="All 2 branches missed.">}</span>
+
+@Composable
+fun PulseAnimation(
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+    content: @Composable (Modifier) -&gt; Unit
+<span class="nc bnc" id="L66" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L67">    val infiniteTransition = rememberInfiniteTransition()</span>
+<span class="nc" id="L68">    val scale = infiniteTransition.animateFloat(</span>
+<span class="nc" id="L69">        initialValue = 1f,</span>
+<span class="nc" id="L70">        targetValue = 1.1f,</span>
+<span class="nc" id="L71">        animationSpec = infiniteRepeatable(</span>
+<span class="nc" id="L72">            animation = tween(1000),</span>
+<span class="nc" id="L73">            repeatMode = RepeatMode.Reverse</span>
+        )
+<span class="nc" id="L75">    ).value</span>
+    
+<span class="nc bnc" id="L77" title="All 2 branches missed.">    content(modifier.graphicsLayer {</span>
+<span class="nc" id="L78">        scaleX = scale</span>
+<span class="nc" id="L79">        scaleY = scale</span>
+<span class="nc" id="L80">    })</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

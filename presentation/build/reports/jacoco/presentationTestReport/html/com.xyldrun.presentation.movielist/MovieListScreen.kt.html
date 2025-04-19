@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieListScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.movielist</a> &gt; <span class="el_source">MovieListScreen.kt</span></div><h1>MovieListScreen.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.movielist
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.xyldrun.domain.model.Movie
+import com.xyldrun.presentation.R
+import com.xyldrun.presentation.ui.common.EmptyStateView
+import com.xyldrun.presentation.ui.common.LoadingAnimation
+import com.xyldrun.presentation.ui.common.LoadingScreen
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun MovieListRoute(
+    onMovieClick: (Int) -&gt; Unit,
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc" id="L42">    viewModel: MovieListViewModel = koinViewModel()</span>
+<span class="nc bnc" id="L43" title="All 26 branches missed.">) {</span>
+<span class="nc" id="L44">    val uiState by viewModel.uiState.collectAsState()</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    MovieListScreen(</span>
+<span class="nc" id="L47">        uiState = uiState,</span>
+<span class="nc" id="L48">        onMovieClick = onMovieClick,</span>
+<span class="nc" id="L49">        onRetry = viewModel::refresh,</span>
+<span class="nc" id="L50">        modifier = modifier</span>
+    )
+<span class="nc bnc" id="L52" title="All 2 branches missed.">}</span>
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MovieListScreen(
+    uiState: MovieListUiState,
+    onMovieClick: (Int) -&gt; Unit,
+    onRetry: () -&gt; Unit,
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L61" title="All 30 branches missed.">) {</span>
+<span class="nc" id="L62">    val isRefreshing = when (uiState) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        is MovieListUiState.Success -&gt; uiState.isRefreshing</span>
+<span class="nc" id="L64">        else -&gt; false</span>
+    }
+    
+<span class="nc" id="L67">    val state = rememberPullToRefreshState()</span>
+    
+<span class="nc bnc" id="L69" title="All 4 branches missed.">    LaunchedEffect(isRefreshing) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (isRefreshing) {</span>
+<span class="nc" id="L71">            onRetry()</span>
+        }
+<span class="nc" id="L73">    }</span>
+
+<span class="nc" id="L75">    Box(</span>
+<span class="nc" id="L76">        modifier = modifier.fillMaxSize()</span>
+    ) {
+<span class="nc" id="L78">        when (uiState) {</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            is MovieListUiState.Loading -&gt; {</span>
+<span class="nc" id="L80">                LoadingScreen()</span>
+            }
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            is MovieListUiState.Success -&gt; {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                if (uiState.movies.isEmpty()) {</span>
+<span class="nc" id="L84">                    EmptyStateView(</span>
+<span class="nc" id="L85">                        message = stringResource(R.string.no_movies_found),</span>
+<span class="nc" id="L86">                        modifier = Modifier.fillMaxSize()</span>
+                    )
+<span class="nc" id="L88">                } else {</span>
+<span class="nc" id="L89">                    MovieList(</span>
+<span class="nc" id="L90">                        movies = uiState.movies,</span>
+<span class="nc" id="L91">                        isLoadingMore = uiState.isLoadingMore,</span>
+<span class="nc" id="L92">                        onLoadMore = onRetry,</span>
+<span class="nc" id="L93">                        onMovieClick = onMovieClick</span>
+                    )
+                }
+            }
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            is MovieListUiState.Error -&gt; {</span>
+<span class="nc" id="L98">                ErrorContent(</span>
+<span class="nc" id="L99">                    message = uiState.message,</span>
+<span class="nc" id="L100">                    isOffline = uiState.isOffline</span>
+                )
+            }
+<span class="nc" id="L103">        }</span>
+
+<span class="nc" id="L105">        PullToRefreshContainer(</span>
+<span class="nc" id="L106">            state = state,</span>
+<span class="nc" id="L107">            modifier = Modifier</span>
+<span class="nc" id="L108">                .align(Alignment.TopCenter)</span>
+<span class="nc" id="L109">                .testTag(&quot;refresh_container&quot;)</span>
+        )
+<span class="nc" id="L111">    }</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">}</span>
+
+@Composable
+private fun MovieList(
+    movies: List&lt;Movie&gt;,
+    isLoadingMore: Boolean,
+    onLoadMore: () -&gt; Unit,
+    onMovieClick: (Int) -&gt; Unit,
+<span class="nc bnc" id="L120" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">) {</span>
+<span class="nc" id="L122">    val listState = rememberLazyListState()</span>
+    
+<span class="nc bnc" id="L124" title="All 12 branches missed.">    LaunchedEffect(listState) {</span>
+<span class="nc" id="L125">        snapshotFlow { </span>
+<span class="nc" id="L126">            val layoutInfo = listState.layoutInfo</span>
+<span class="nc" id="L127">            val totalItemsNumber = layoutInfo.totalItemsCount</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            lastVisibleItemIndex &gt; (totalItemsNumber - 2)</span>
+<span class="nc" id="L131">        }.collect { shouldLoadMore -&gt;</span>
+<span class="nc bnc" id="L132" title="All 4 branches missed.">            if (shouldLoadMore &amp;&amp; !isLoadingMore) {</span>
+<span class="nc" id="L133">                onLoadMore()</span>
+            }
+<span class="nc" id="L135">        }</span>
+<span class="nc" id="L136">    }</span>
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">    if (movies.isEmpty()) {</span>
+<span class="nc" id="L139">        EmptyStateView(</span>
+<span class="nc" id="L140">            message = &quot;No movies found&quot;,</span>
+<span class="nc" id="L141">            modifier = modifier.fillMaxSize()</span>
+        )
+<span class="nc bnc" id="L143" title="All 4 branches missed.">    } else {</span>
+<span class="nc" id="L144">        LazyColumn(</span>
+<span class="nc" id="L145">            state = listState,</span>
+<span class="nc" id="L146">            modifier = modifier.fillMaxSize(),</span>
+<span class="nc" id="L147">            contentPadding = PaddingValues(16.dp),</span>
+<span class="nc" id="L148">            verticalArrangement = Arrangement.spacedBy(16.dp)</span>
+        ) {
+<span class="nc" id="L150">            items(</span>
+<span class="nc" id="L151">                items = movies,</span>
+<span class="nc" id="L152">                key = { it.id }</span>
+            ) { movie -&gt;
+                MovieItem(
+                    movie = movie,
+<span class="nc" id="L156">                    onClick = { onMovieClick(movie.id) }</span>
+                )
+            }
+
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (isLoadingMore) {</span>
+<span class="nc" id="L161">                item {</span>
+<span class="nc bnc" id="L162" title="All 6 branches missed.">                    Box(</span>
+<span class="nc" id="L163">                        modifier = Modifier</span>
+<span class="nc" id="L164">                            .fillMaxWidth()</span>
+<span class="nc" id="L165">                            .padding(16.dp),</span>
+<span class="nc" id="L166">                        contentAlignment = Alignment.Center</span>
+                    ) {
+<span class="nc" id="L168">                        LoadingAnimation()</span>
+<span class="nc" id="L169">                    }</span>
+<span class="nc" id="L170">                }</span>
+            }
+<span class="nc" id="L172">        }</span>
+    }
+<span class="nc" id="L174">}</span>
+
+@Composable
+private fun MovieItem(
+    movie: Movie,
+    onClick: () -&gt; Unit,
+<span class="nc bnc" id="L180" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">) {</span>
+<span class="nc bnc" id="L182" title="All 4 branches missed.">    Card(</span>
+<span class="nc" id="L183">        modifier = modifier.fillMaxWidth(),</span>
+<span class="nc" id="L184">        onClick = onClick</span>
+<span class="nc" id="L185">    ) {</span>
+<span class="nc bnc" id="L186" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L187">            modifier = Modifier.padding(16.dp)</span>
+        ) {
+<span class="nc" id="L189">            Text(</span>
+<span class="nc" id="L190">                text = movie.title,</span>
+<span class="nc" id="L191">                style = MaterialTheme.typography.titleLarge</span>
+            )
+<span class="nc" id="L193">            Spacer(modifier = Modifier.height(8.dp))</span>
+<span class="nc" id="L194">            Text(</span>
+<span class="nc" id="L195">                text = movie.overview,</span>
+<span class="nc" id="L196">                style = MaterialTheme.typography.bodyMedium,</span>
+<span class="nc" id="L197">                maxLines = 3</span>
+            )
+<span class="nc" id="L199">        }</span>
+<span class="nc" id="L200">    }</span>
+<span class="nc" id="L201">}</span>
+
+@Composable
+private fun ErrorContent(
+    message: String,
+    isOffline: Boolean,
+<span class="nc bnc" id="L207" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L208" title="All 24 branches missed.">) {</span>
+<span class="nc" id="L209">    Column(</span>
+<span class="nc" id="L210">        modifier = modifier.fillMaxSize(),</span>
+<span class="nc" id="L211">        horizontalAlignment = Alignment.CenterHorizontally,</span>
+<span class="nc" id="L212">        verticalArrangement = Arrangement.Center</span>
+    ) {
+<span class="nc" id="L214">        Text(</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            text = if (isOffline) &quot;No internet connection&quot; else message,</span>
+<span class="nc" id="L216">            style = MaterialTheme.typography.bodyLarge,</span>
+<span class="nc" id="L217">            color = MaterialTheme.colorScheme.error</span>
+        )
+<span class="nc" id="L219">    }</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,11 @@
+R_DEF: Internal format may change without notice
+local
+string button_retry
+string error_database
+string error_network
+string error_unknown
+string network_error_showing_cached
+string no_movies_found
+string offline_message
+string retry
+string showing_cached_content

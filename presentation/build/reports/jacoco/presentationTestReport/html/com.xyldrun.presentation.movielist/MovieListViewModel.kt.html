@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieListViewModel.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.movielist</a> &gt; <span class="el_source">MovieListViewModel.kt</span></div><h1>MovieListViewModel.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.movielist
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.xyldrun.core.util.NetworkMonitor
+import com.xyldrun.domain.model.Movie
+import com.xyldrun.domain.usecase.GetPopularMoviesUseCase
+import com.xyldrun.domain.usecase.RefreshMoviesUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
+
+<span class="fc" id="L20">class MovieListViewModel(</span>
+<span class="fc" id="L21">    private val getPopularMovies: GetPopularMoviesUseCase,</span>
+<span class="fc" id="L22">    private val refreshMovies: RefreshMoviesUseCase,</span>
+<span class="fc" id="L23">    private val networkMonitor: NetworkMonitor</span>
+<span class="fc" id="L24">) : ViewModel() {</span>
+
+<span class="fc" id="L26">    private val _uiState = MutableStateFlow&lt;MovieListUiState&gt;(MovieListUiState.Loading)</span>
+<span class="fc" id="L27">    val uiState: StateFlow&lt;MovieListUiState&gt; = _uiState.asStateFlow()</span>
+
+<span class="fc" id="L29">    private var currentPage = 1</span>
+    private var isLastPage = false
+    private var loadJob: Job? = null
+    private var isLoadingMore = false
+<span class="fc" id="L33">    private var currentMovies: List&lt;Movie&gt; = emptyList()</span>
+    private var isRefreshing = false
+
+<span class="fc" id="L36">    init {</span>
+<span class="fc" id="L37">        observeNetworkChanges()</span>
+<span class="fc" id="L38">        loadMovies(forceRefresh = true)</span>
+<span class="fc" id="L39">    }</span>
+
+    private fun observeNetworkChanges() {
+<span class="fc" id="L42">        networkMonitor.observeNetworkState()</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            .onEach { isConnected -&gt;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">                Log.d(&quot;MovieListViewModel&quot;, &quot;Network state changed: isConnected=$isConnected&quot;)</span>
+<span class="fc bfc" id="L45" title="All 4 branches covered.">                if (isConnected &amp;&amp; _uiState.value is MovieListUiState.Error) {</span>
+<span class="fc" id="L46">                    loadMovies(forceRefresh = true)</span>
+                }
+<span class="fc" id="L48">            }</span>
+<span class="fc" id="L49">            .launchIn(viewModelScope)</span>
+<span class="fc" id="L50">    }</span>
+
+<span class="nc" id="L52">    fun loadMovies(forceRefresh: Boolean = false) {</span>
+<span class="fc" id="L53">        viewModelScope.launch {</span>
+<span class="fc" id="L54">            try {</span>
+<span class="fc" id="L55">                Timber.d(&quot;Loading movies: forceRefresh=$forceRefresh, currentPage=$currentPage&quot;)</span>
+                
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if (forceRefresh) {</span>
+<span class="fc" id="L58">                    currentPage = 1</span>
+<span class="fc" id="L59">                    isLastPage = false</span>
+<span class="fc" id="L60">                    _uiState.update { MovieListUiState.Loading }</span>
+                }
+
+<span class="fc" id="L63">                val currentState = _uiState.value</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                if (currentState is MovieListUiState.Success) {</span>
+<span class="fc" id="L65">                    _uiState.update { </span>
+<span class="fc" id="L66">                        currentState.copy(</span>
+<span class="fc" id="L67">                            isLoadingMore = true,</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                            isRefreshing = forceRefresh,</span>
+<span class="fc" id="L69">                            loadMoreError = null</span>
+                        )
+                    }
+                }
+
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                if (forceRefresh) {</span>
+<span class="fc" id="L75">                    Timber.d(&quot;Refreshing movies&quot;)</span>
+<span class="fc" id="L76">                    refreshMovies()</span>
+                }
+
+<span class="fc" id="L79">                val movies = getPopularMovies()</span>
+<span class="fc" id="L80">                movies.collect { movieList -&gt;</span>
+<span class="fc" id="L81">                    Timber.d(&quot;Received ${movieList.size} movies&quot;)</span>
+<span class="pc bpc" id="L82" title="1 of 4 branches missed.">                    val currentMovies = if (currentState is MovieListUiState.Success &amp;&amp; !forceRefresh) {</span>
+<span class="fc" id="L83">                        currentState.movies + movieList</span>
+                    } else {
+<span class="fc" id="L85">                        movieList</span>
+                    }
+
+<span class="fc" id="L88">                    isLastPage = movieList.isEmpty()</span>
+<span class="fc" id="L89">                    _uiState.update {</span>
+<span class="fc" id="L90">                        MovieListUiState.Success(</span>
+<span class="fc" id="L91">                            movies = currentMovies,</span>
+<span class="fc" id="L92">                            isLoadingMore = false,</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                            canLoadMore = !isLastPage,</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                            isShowingCached = !networkMonitor.isNetworkAvailable(),</span>
+<span class="fc" id="L95">                            isRefreshing = false,</span>
+<span class="fc" id="L96">                            loadMoreError = null</span>
+                        )
+                    }
+<span class="fc" id="L99">                }</span>
+<span class="fc" id="L100">            } catch (e: Exception) {</span>
+<span class="fc" id="L101">                Timber.e(e, &quot;Error loading movies&quot;)</span>
+<span class="fc" id="L102">                val currentState = _uiState.value</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                if (currentState is MovieListUiState.Success) {</span>
+<span class="fc" id="L104">                    _uiState.update {</span>
+<span class="fc" id="L105">                        currentState.copy(</span>
+<span class="fc" id="L106">                            isLoadingMore = false,</span>
+<span class="fc" id="L107">                            isRefreshing = false,</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                            loadMoreError = e.message ?: &quot;Unknown error&quot;</span>
+                        )
+                    }
+                } else {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">                    val isOffline = !networkMonitor.isNetworkAvailable()</span>
+<span class="pc bpc" id="L113" title="5 of 6 branches missed.">                    val showingCached = currentState is MovieListUiState.Success &amp;&amp; currentState.movies.isNotEmpty()</span>
+<span class="fc" id="L114">                    _uiState.update { </span>
+<span class="fc" id="L115">                        MovieListUiState.Error(</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                            message = e.message ?: &quot;Unknown error&quot;,</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                            isOffline = isOffline,</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                            showingCached = showingCached</span>
+                        )
+                    }
+                }
+            }
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">    }</span>
+
+    fun retryLoadMore() {
+<span class="fc" id="L127">        loadMovies(forceRefresh = false)</span>
+<span class="fc" id="L128">    }</span>
+
+    fun refresh() {
+<span class="fc" id="L131">        loadMovies(forceRefresh = true)</span>
+<span class="fc" id="L132">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

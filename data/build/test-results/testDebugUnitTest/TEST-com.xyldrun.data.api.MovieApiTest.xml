@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.xyldrun.data.api.MovieApiTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2025-04-19T13:06:12" hostname="MACPH79K947HX" time="1.385">
+  <properties/>
+  <testcase name="clearCache removes cached data" classname="com.xyldrun.data.api.MovieApiTest" time="1.344"/>
+  <testcase name="getPopularMovies uses cached data when network is unavailable" classname="com.xyldrun.data.api.MovieApiTest" time="0.006"/>
+  <testcase name="getPopularMovies retries on retryable errors" classname="com.xyldrun.data.api.MovieApiTest" time="0.015"/>
+  <testcase name="getPopularMovies handles network state changes" classname="com.xyldrun.data.api.MovieApiTest" time="0.006"/>
+  <testcase name="getPopularMovies returns successful response" classname="com.xyldrun.data.api.MovieApiTest" time="0.004"/>
+  <testcase name="cleanup cancels all active requests" classname="com.xyldrun.data.api.MovieApiTest" time="0.004"/>
+  <testcase name="getPopularMovies handles network unavailability" classname="com.xyldrun.data.api.MovieApiTest" time="0.003"/>
+  <testcase name="getPopularMovies handles request cancellation" classname="com.xyldrun.data.api.MovieApiTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

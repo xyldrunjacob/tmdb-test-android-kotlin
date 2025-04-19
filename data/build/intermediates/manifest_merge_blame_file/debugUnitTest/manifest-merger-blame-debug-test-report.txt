@@ -1,0 +1,122 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.xyldrun.data.test" >
+4
+5    <uses-sdk
+5-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:5:5-74
+6        android:minSdkVersion="26"
+6-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:5:15-41
+7        android:targetSdkVersion="26" />
+7-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:5:42-71
+8
+9    <instrumentation
+9-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:11:5-13:71
+10        android:name="android.test.InstrumentationTestRunner"
+10-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:11:22-75
+11        android:label="Tests for com.xyldrun.data.test"
+11-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:13:22-69
+12        android:targetPackage="com.xyldrun.data.test" />
+12-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:12:22-67
+13
+14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+14-->[:data] /Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/merged_manifest/debug/AndroidManifest.xml:7:5-79
+14-->[:data] /Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/merged_manifest/debug/AndroidManifest.xml:7:22-76
+15
+16    <permission
+16-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+17        android:name="com.xyldrun.data.test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="com.xyldrun.data.test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+21
+22    <application
+22-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:7:5-9:19
+23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+23-->[androidx.core:core:1.12.0] /Users/xyldrun/.gradle/caches/transforms-3/01f63a24e448816f7438fcd4e353b85e/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+24        android:debuggable="true" >
+24-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:7:18-43
+25        <uses-library android:name="android.test.runner" />
+25-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:8:9-60
+25-->/Users/xyldrun/AndroidStudioProjects/MyApplication/data/build/intermediates/tmp/manifest/test/debug/tempFile1ProcessTestManifest3094650447876141360.xml:8:23-57
+26
+27        <service
+27-->[androidx.room:room-runtime:2.6.1] /Users/xyldrun/.gradle/caches/transforms-3/478865875639f9879e08b5fe799eb757/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+28            android:name="androidx.room.MultiInstanceInvalidationService"
+28-->[androidx.room:room-runtime:2.6.1] /Users/xyldrun/.gradle/caches/transforms-3/478865875639f9879e08b5fe799eb757/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+29            android:directBootAware="true"
+29-->[androidx.room:room-runtime:2.6.1] /Users/xyldrun/.gradle/caches/transforms-3/478865875639f9879e08b5fe799eb757/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+30            android:exported="false" />
+30-->[androidx.room:room-runtime:2.6.1] /Users/xyldrun/.gradle/caches/transforms-3/478865875639f9879e08b5fe799eb757/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+31
+32        <provider
+32-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+33            android:name="androidx.startup.InitializationProvider"
+33-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+34            android:authorities="com.xyldrun.data.test.androidx-startup"
+34-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+35            android:exported="false" >
+35-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+36            <meta-data
+36-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+37                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+37-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+38                android:value="androidx.startup" />
+38-->[androidx.emoji2:emoji2:1.2.0] /Users/xyldrun/.gradle/caches/transforms-3/2a5804a38ac53ac0fff1ef09c74a434b/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+39            <meta-data
+39-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/xyldrun/.gradle/caches/transforms-3/947600b8847a4a99c5a2a48eda6a6aac/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+40                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+40-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/xyldrun/.gradle/caches/transforms-3/947600b8847a4a99c5a2a48eda6a6aac/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+41                android:value="androidx.startup" />
+41-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/xyldrun/.gradle/caches/transforms-3/947600b8847a4a99c5a2a48eda6a6aac/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+42            <meta-data
+42-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+43                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+43-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+44                android:value="androidx.startup" />
+44-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+45        </provider>
+46
+47        <receiver
+47-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+48            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+48-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+49            android:directBootAware="false"
+49-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+50            android:enabled="true"
+50-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+51            android:exported="true"
+51-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+52            android:permission="android.permission.DUMP" >
+52-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+53            <intent-filter>
+53-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+54                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+54-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+54-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+55            </intent-filter>
+56            <intent-filter>
+56-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+57                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+57-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+57-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+58            </intent-filter>
+59            <intent-filter>
+59-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+60                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+60-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+60-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+61            </intent-filter>
+62            <intent-filter>
+62-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+63                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+63-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+63-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/xyldrun/.gradle/caches/transforms-3/1136d0b4a66339ed32c0ced552a07706/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+64            </intent-filter>
+65        </receiver>
+66    </application>
+67
+68</manifest>

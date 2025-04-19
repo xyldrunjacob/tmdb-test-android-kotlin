@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieApi.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">data</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.data.remote</a> &gt; <span class="el_source">MovieApi.kt</span></div><h1>MovieApi.kt</h1><pre class="source lang-java linenums">package com.xyldrun.data.remote
+
+import android.util.Log
+import com.xyldrun.core.util.NetworkMonitor
+import com.xyldrun.data.remote.KtorClient.API_VERSION
+import com.xyldrun.data.remote.dto.MovieDetailsDto
+import com.xyldrun.data.remote.dto.MovieListResponse
+import com.xyldrun.data.remote.error.MovieApiException
+import com.xyldrun.data.remote.error.MovieApiExceptionMapper
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.seconds
+
+interface MovieApiService {
+    fun getPopularMovies(page: Int): Flow&lt;MovieListResponse&gt;
+    fun getMovieDetails(movieId: Int): Flow&lt;MovieDetailsDto&gt;
+    suspend fun cleanup()
+    fun clearCache()
+}
+
+<span class="pc" id="L43">class MovieApi(</span>
+<span class="pc" id="L44">    private val client: HttpClient = KtorClient.client,</span>
+<span class="pc" id="L45">    private val exceptionMapper: MovieApiExceptionMapper = MovieApiExceptionMapper(),</span>
+<span class="fc" id="L46">    private val networkMonitor: NetworkMonitor,</span>
+<span class="pc" id="L47">    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,</span>
+) : MovieApiService {
+    
+<span class="fc" id="L50">    private val scope = CoroutineScope(dispatcher + Job())</span>
+<span class="fc" id="L51">    private val activeRequests = ConcurrentHashMap&lt;String, Job&gt;()</span>
+<span class="fc" id="L52">    private val requestCache = ConcurrentHashMap&lt;String, CacheEntry&lt;Any&gt;&gt;()</span>
+<span class="fc" id="L53">    private val cacheMutex = Mutex()</span>
+
+<span class="fc" id="L55">    init {</span>
+<span class="fc" id="L56">        observeNetworkState()</span>
+<span class="fc" id="L57">    }</span>
+
+    private fun observeNetworkState() {
+<span class="fc" id="L60">        scope.launch {</span>
+<span class="fc" id="L61">            networkMonitor.observeNetworkState().collect { isAvailable -&gt;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                if (!isAvailable) {</span>
+                    // Cancel all active requests when network becomes unavailable
+<span class="pc" id="L64">                    activeRequests.values.forEach { it.cancel() }</span>
+<span class="fc" id="L65">                    activeRequests.clear()</span>
+                }
+<span class="fc" id="L67">            }</span>
+<span class="nc" id="L68">        }</span>
+<span class="fc" id="L69">    }</span>
+
+<span class="fc" id="L71">    private data class CacheEntry&lt;T&gt;(</span>
+<span class="fc" id="L72">        val data: T,</span>
+<span class="pc" id="L73">        val timestamp: Long = System.currentTimeMillis()</span>
+<span class="fc" id="L74">    )</span>
+
+    override fun getPopularMovies(page: Int): Flow&lt;MovieListResponse&gt; = 
+<span class="fc" id="L77">        executeRequest(&quot;popular_$page&quot;, CACHE_DURATION_POPULAR) {</span>
+<span class="fc" id="L78">            Log.d(&quot;MovieApi&quot;, &quot;Fetching popular movies, page: $page&quot;)</span>
+<span class="fc" id="L79">            client.get(&quot;/$API_VERSION/movie/popular&quot;) {</span>
+<span class="fc" id="L80">                parameter(&quot;page&quot;, page)</span>
+<span class="fc" id="L81">            }.body&lt;MovieListResponse&gt;().also {</span>
+<span class="fc" id="L82">                Log.d(&quot;MovieApi&quot;, &quot;Received ${it.results.size} movies&quot;)</span>
+<span class="fc" id="L83">            }</span>
+<span class="fc" id="L84">        }</span>
+
+    override fun getMovieDetails(movieId: Int): Flow&lt;MovieDetailsDto&gt; = 
+<span class="nc" id="L87">        executeRequest(&quot;details_$movieId&quot;, CACHE_DURATION_DETAILS) {</span>
+<span class="nc" id="L88">            Log.d(&quot;MovieApi&quot;, &quot;Fetching movie details, id: $movieId&quot;)</span>
+<span class="nc" id="L89">            client.get(&quot;/$API_VERSION/movie/$movieId&quot;).body&lt;MovieDetailsDto&gt;().also {</span>
+<span class="nc" id="L90">                Log.d(&quot;MovieApi&quot;, &quot;Received details for movie: ${it.title}&quot;)</span>
+<span class="nc" id="L91">            }</span>
+<span class="nc" id="L92">        }</span>
+
+    private fun &lt;T : Any&gt; executeRequest(
+        requestId: String,
+        cacheDuration: Long,
+        request: suspend () -&gt; T
+<span class="fc" id="L98">    ): Flow&lt;T&gt; = channelFlow {</span>
+        // Check network state first
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (!networkMonitor.isNetworkAvailable()) {</span>
+<span class="fc" id="L101">            Log.d(&quot;MovieApi&quot;, &quot;No network available, checking cache for $requestId&quot;)</span>
+            // Try to get from cache if no network
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            getCachedData&lt;T&gt;(requestId)?.let {</span>
+<span class="fc" id="L104">                Log.d(&quot;MovieApi&quot;, &quot;Found cached data for $requestId&quot;)</span>
+<span class="fc" id="L105">                send(it)</span>
+<span class="fc" id="L106">                return@channelFlow</span>
+            }
+<span class="fc" id="L108">            Log.d(&quot;MovieApi&quot;, &quot;No cached data found for $requestId&quot;)</span>
+<span class="fc" id="L109">            throw MovieApiException.NetworkError(&quot;No cached data found for $requestId&quot;)</span>
+        }
+
+        // Try to get from cache first if not expired
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        getCachedData&lt;T&gt;(requestId)?.let {</span>
+<span class="nc" id="L114">            Log.d(&quot;MovieApi&quot;, &quot;Found cached data for $requestId&quot;)</span>
+<span class="nc" id="L115">            send(it)</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            if (!isCacheExpired(requestId, cacheDuration)) {</span>
+<span class="nc" id="L117">                Log.d(&quot;MovieApi&quot;, &quot;Cache is still valid for $requestId&quot;)</span>
+<span class="nc" id="L118">                return@channelFlow</span>
+            }
+<span class="nc" id="L120">            Log.d(&quot;MovieApi&quot;, &quot;Cache is expired for $requestId&quot;)</span>
+        }
+
+        // Cancel existing request if any
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        activeRequests[requestId]?.cancel()</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        activeRequests[requestId] = scope.launch { }</span>
+
+<span class="fc" id="L127">        var currentDelay = INITIAL_BACKOFF_DELAY</span>
+<span class="fc" id="L128">        var lastError: Exception? = null</span>
+
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        repeat(maxRetries) { attempt -&gt;</span>
+<span class="fc" id="L131">            try {</span>
+<span class="fc" id="L132">                Log.d(&quot;MovieApi&quot;, &quot;Attempt ${attempt + 1} for $requestId&quot;)</span>
+<span class="fc" id="L133">                val response = withContext(dispatcher) {</span>
+<span class="fc" id="L134">                    request()</span>
+                }
+                // Cache successful response
+<span class="fc" id="L137">                cacheMutex.withLock {</span>
+<span class="fc" id="L138">                    requestCache[requestId] = CacheEntry(response)</span>
+<span class="fc" id="L139">                }</span>
+<span class="fc" id="L140">                Log.d(&quot;MovieApi&quot;, &quot;Request successful for $requestId&quot;)</span>
+<span class="fc" id="L141">                send(response)</span>
+<span class="fc" id="L142">                return@channelFlow</span>
+<span class="nc" id="L143">            } catch (e: CancellationException) {</span>
+<span class="nc" id="L144">                throw e</span>
+<span class="nc" id="L145">            } catch (e: ResponseException) {</span>
+<span class="nc" id="L146">                lastError = e</span>
+<span class="nc" id="L147">                Log.e(&quot;MovieApi&quot;, &quot;Response error for $requestId: ${e.message}&quot;)</span>
+<span class="nc" id="L148">                val mappedException = exceptionMapper.map(e)</span>
+<span class="nc bnc" id="L149" title="All 4 branches missed.">                if (!mappedException.isRetryable() || attempt == maxRetries - 1) {</span>
+<span class="nc" id="L150">                    throw mappedException</span>
+                }
+<span class="nc" id="L152">                delay(currentDelay)</span>
+<span class="nc" id="L153">                currentDelay *= BACKOFF_MULTIPLIER</span>
+<span class="fc" id="L154">            } catch (e: Exception) {</span>
+<span class="fc" id="L155">                lastError = e</span>
+<span class="fc" id="L156">                Log.e(&quot;MovieApi&quot;, &quot;Error for $requestId: ${e.message}&quot;)</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                if (attempt == maxRetries - 1) {</span>
+<span class="nc" id="L158">                    throw MovieApiException.NetworkError(&quot;Error for $requestId: ${e.message}&quot;)</span>
+                }
+<span class="fc" id="L160">                delay(currentDelay)</span>
+<span class="fc" id="L161">                currentDelay *= BACKOFF_MULTIPLIER</span>
+            }
+<span class="fc" id="L163">        }</span>
+
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        throw lastError ?: MovieApiException.UnknownError(&quot;All retries failed&quot;)</span>
+    }
+<span class="fc" id="L167">    .buffer(</span>
+<span class="fc" id="L168">        capacity = 1,</span>
+<span class="fc" id="L169">        onBufferOverflow = BufferOverflow.DROP_OLDEST</span>
+    )
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">    .onCompletion {</span>
+<span class="fc" id="L172">        activeRequests.remove(requestId)</span>
+<span class="fc" id="L173">    }</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">    .catch { e -&gt;</span>
+<span class="fc" id="L175">        when (e) {</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">            is CancellationException -&gt; throw e</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">            is MovieApiException -&gt; throw e</span>
+<span class="nc bnc" id="L178" title="All 2 branches missed.">            else -&gt; throw MovieApiException.UnknownError(e.message ?: &quot;Unknown error occurred&quot;)</span>
+        }
+    }
+<span class="fc" id="L181">    .flowOn(dispatcher)</span>
+
+    @Suppress(&quot;UNCHECKED_CAST&quot;)
+    private suspend fun &lt;T&gt; getCachedData(requestId: String): T? {
+<span class="fc" id="L185">        return cacheMutex.withLock {</span>
+<span class="fc bfc" id="L186" title="All 4 branches covered.">            (requestCache[requestId]?.data as? T)</span>
+        }
+    }
+
+    private suspend fun isCacheExpired(requestId: String, duration: Long): Boolean {
+<span class="nc" id="L191">        return cacheMutex.withLock {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            val entry = requestCache[requestId] ?: return true</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            (System.currentTimeMillis() - entry.timestamp) &gt; duration</span>
+        }
+    }
+
+    override suspend fun cleanup() {
+<span class="pc" id="L198">        activeRequests.values.forEach { it.cancel() }</span>
+<span class="fc" id="L199">        activeRequests.clear()</span>
+<span class="fc" id="L200">        clearCache()</span>
+<span class="fc" id="L201">        scope.cancel()</span>
+<span class="fc" id="L202">    }</span>
+
+    override fun clearCache() {
+<span class="fc" id="L205">        requestCache.clear()</span>
+<span class="fc" id="L206">    }</span>
+
+<span class="nc" id="L208">    private fun MovieApiException.isRetryable(): Boolean = when (this) {</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        is MovieApiException.RateLimitExceeded,</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        is MovieApiException.ServerError,</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        is MovieApiException.NetworkError -&gt; true</span>
+<span class="nc" id="L212">        else -&gt; false</span>
+<span class="nc" id="L213">    }</span>
+
+    companion object {
+<span class="fc" id="L216">        private val INITIAL_BACKOFF_DELAY = 1.seconds</span>
+        private const val BACKOFF_MULTIPLIER = 2.0
+        private const val maxRetries = 3
+
+        // Cache durations
+        private const val CACHE_DURATION_POPULAR = 5 * 60 * 1000L // 5 minutes
+        private const val CACHE_DURATION_DETAILS = 30 * 60 * 1000L // 30 minutes
+        private const val CACHE_DURATION_VIDEOS = 60 * 60 * 1000L // 1 hour
+        private const val CACHE_DURATION_SIMILAR = 30 * 60 * 1000L // 30 minutes
+        private const val CACHE_DURATION_RECOMMENDATIONS = 30 * 60 * 1000L // 30 minutes
+        private const val CACHE_DURATION_SEARCH = 5 * 60 * 1000L // 5 minutes
+        private const val CACHE_DURATION_GENRES = 24 * 60 * 60 * 1000L // 24 hours
+    }
+<span class="nc" id="L229">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

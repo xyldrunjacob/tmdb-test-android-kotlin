@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieRepositoryImpl.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">data</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.data.repository</a> &gt; <span class="el_source">MovieRepositoryImpl.kt</span></div><h1>MovieRepositoryImpl.kt</h1><pre class="source lang-java linenums">package com.xyldrun.data.repository
+
+import com.xyldrun.core.util.NetworkMonitor
+import com.xyldrun.data.local.MovieDao
+import com.xyldrun.data.local.MovieEntity
+import com.xyldrun.data.remote.MovieApi
+import com.xyldrun.data.remote.dto.MovieDetailsDto
+import com.xyldrun.data.remote.dto.MovieDto
+import com.xyldrun.data.remote.dto.MovieListResponse
+import com.xyldrun.data.remote.error.MovieApiException
+import com.xyldrun.domain.model.Movie
+import com.xyldrun.domain.repository.MovieRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+
+<span class="fc" id="L17">class MovieRepositoryImpl(</span>
+<span class="fc" id="L18">    private val api: MovieApi,</span>
+<span class="fc" id="L19">    private val dao: MovieDao,</span>
+<span class="fc" id="L20">    private val networkMonitor: NetworkMonitor</span>
+) : MovieRepository {
+
+    // Cache transformation functions
+<span class="fc" id="L24">    private val entityToDomainMapper: (MovieEntity) -&gt; Movie = { entity -&gt;</span>
+<span class="fc" id="L25">        Movie(</span>
+<span class="fc" id="L26">            id = entity.id,</span>
+<span class="fc" id="L27">            title = entity.title,</span>
+<span class="fc" id="L28">            overview = entity.overview,</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">            posterPath = entity.posterPath ?: &quot;&quot;,</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">            backdropPath = entity.backdropPath ?: &quot;&quot;,</span>
+<span class="fc" id="L31">            releaseDate = entity.releaseDate,</span>
+<span class="fc" id="L32">            voteAverage = entity.voteAverage,</span>
+<span class="fc" id="L33">            voteCount = entity.voteCount</span>
+        )
+    }
+
+<span class="fc" id="L37">    private val dtoToEntityMapper: (MovieDto) -&gt; MovieEntity = { dto -&gt;</span>
+<span class="fc" id="L38">        MovieEntity(</span>
+<span class="fc" id="L39">            id = dto.id,</span>
+<span class="fc" id="L40">            title = dto.title,</span>
+<span class="fc" id="L41">            overview = dto.overview,</span>
+<span class="fc" id="L42">            posterPath = dto.posterPath,</span>
+<span class="fc" id="L43">            backdropPath = dto.backdropPath,</span>
+<span class="fc" id="L44">            releaseDate = dto.releaseDate,</span>
+<span class="fc" id="L45">            voteAverage = dto.voteAverage,</span>
+<span class="fc" id="L46">            voteCount = dto.voteCount</span>
+        )
+    }
+
+<span class="fc" id="L50">    private val detailsDtoToEntityMapper: (MovieDetailsDto) -&gt; MovieEntity = { dto -&gt;</span>
+<span class="nc" id="L51">        MovieEntity(</span>
+<span class="nc" id="L52">            id = dto.id,</span>
+<span class="nc" id="L53">            title = dto.title,</span>
+<span class="nc" id="L54">            overview = dto.overview,</span>
+<span class="nc" id="L55">            posterPath = dto.posterPath,</span>
+<span class="nc" id="L56">            backdropPath = dto.backdropPath,</span>
+<span class="nc" id="L57">            releaseDate = dto.releaseDate,</span>
+<span class="nc" id="L58">            voteAverage = dto.voteAverage,</span>
+<span class="nc" id="L59">            voteCount = dto.voteCount</span>
+        )
+    }
+
+    override fun getPopularMovies(): Flow&lt;List&lt;Movie&gt;&gt; {
+<span class="fc" id="L64">        return dao.getAllMovies()</span>
+<span class="fc" id="L65">            .map { entities -&gt; entities.map(entityToDomainMapper) }</span>
+    }
+
+<span class="fc" id="L68">    override suspend fun refreshPopularMovies(page: Int) {</span>
+<span class="fc" id="L69">        try {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (!networkMonitor.isNetworkAvailable()) {</span>
+<span class="nc" id="L71">                handleOfflineState()</span>
+<span class="nc" id="L72">                return</span>
+            }
+
+<span class="fc" id="L75">            val response = api.getPopularMovies(page).first()</span>
+            
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            if (page == 1) {</span>
+<span class="fc" id="L78">                handleFirstPageResponse(response)</span>
+            } else {
+<span class="nc" id="L80">                handlePaginationResponse(response)</span>
+            }
+<span class="fc" id="L82">        } catch (e: Exception) {</span>
+<span class="fc" id="L83">            when (e) {</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                is MovieApiException.ServerError -&gt; handleServerError(page)</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                is MovieApiException.NetworkError -&gt; handleOfflineState()</span>
+<span class="nc" id="L86">                else -&gt; handleNetworkError(e, page)</span>
+            }
+        }
+<span class="pc" id="L89">    }</span>
+
+    private suspend fun handleServerError(page: Int) {
+<span class="fc" id="L92">        val movieCount = dao.getMovieCount()</span>
+<span class="pc bpc" id="L93" title="1 of 4 branches missed.">        if (page == 1 &amp;&amp; movieCount &gt; 0) {</span>
+<span class="fc" id="L94">            throw MovieApiException.ServerError(&quot;Service is temporarily unavailable. Showing cached data.&quot;)</span>
+        } else {
+<span class="fc" id="L96">            throw MovieApiException.ServerError(&quot;Service is temporarily unavailable. Please try again later.&quot;)</span>
+        }
+    }
+
+<span class="fc" id="L100">    private suspend fun handleFirstPageResponse(response: MovieListResponse) {</span>
+<span class="fc" id="L101">        val existingMovies = dao.getAllMoviesAsList()</span>
+<span class="fc" id="L102">        val newMovies = response.results.map(dtoToEntityMapper)</span>
+<span class="fc" id="L103">        val updatedMovies = mergeMovieLists(existingMovies, newMovies)</span>
+<span class="fc" id="L104">        dao.updateMovies(updatedMovies)</span>
+<span class="fc" id="L105">    }</span>
+
+    private suspend fun handlePaginationResponse(response: MovieListResponse) {
+<span class="nc" id="L108">        dao.insertMovies(response.results.map(dtoToEntityMapper))</span>
+<span class="nc" id="L109">    }</span>
+
+    private suspend fun handleOfflineState() {
+<span class="fc" id="L112">        val movieCount = dao.getMovieCount()</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (movieCount &gt; 0) {</span>
+<span class="fc" id="L114">            throw MovieApiException.NetworkError(&quot;Network is unavailable&quot;)</span>
+        } else {
+<span class="fc" id="L116">            throw MovieApiException.NoInternetConnection(&quot;No internet connection available&quot;)</span>
+        }
+    }
+
+    private suspend fun handleNetworkError(error: Exception, page: Int) {
+<span class="fc" id="L121">        val movieCount = dao.getMovieCount()</span>
+<span class="pc bpc" id="L122" title="2 of 4 branches missed.">        if (page == 1 &amp;&amp; movieCount &gt; 0) {</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            throw MovieApiException.CacheError(&quot;Using cached data: ${error.message ?: &quot;Network error&quot;}&quot;)</span>
+        } else {
+<span class="fc" id="L125">            when (error) {</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                is MovieApiException -&gt; throw error</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">                else -&gt; throw MovieApiException.UnknownError(&quot;Unknown error occurred: ${error.message ?: &quot;No error message&quot;}&quot;)</span>
+            }
+        }
+    }
+
+    private suspend fun mergeMovieLists(
+        existing: List&lt;MovieEntity&gt;,
+        new: List&lt;MovieEntity&gt;
+    ): List&lt;MovieEntity&gt; {
+<span class="pc" id="L136">        val existingIds = existing.asSequence().map { it.id }.toSet()</span>
+<span class="fc" id="L137">        val updatedExisting = existing.asSequence().map { existingMovie -&gt;</span>
+<span class="nc bnc" id="L138" title="All 10 branches missed.">            new.find { it.id == existingMovie.id }?.let { newMovie -&gt;</span>
+<span class="nc" id="L139">                existingMovie.copy(</span>
+<span class="nc" id="L140">                    title = newMovie.title,</span>
+<span class="nc" id="L141">                    overview = newMovie.overview,</span>
+<span class="nc" id="L142">                    posterPath = newMovie.posterPath,</span>
+<span class="nc" id="L143">                    backdropPath = newMovie.backdropPath,</span>
+<span class="nc" id="L144">                    releaseDate = newMovie.releaseDate,</span>
+<span class="nc" id="L145">                    voteAverage = newMovie.voteAverage,</span>
+<span class="nc" id="L146">                    voteCount = newMovie.voteCount</span>
+                )
+<span class="nc" id="L148">            } ?: existingMovie</span>
+        }
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">        val newMovies = new.asSequence().filter { it.id !in existingIds }</span>
+<span class="fc" id="L151">        return (updatedExisting + newMovies).toList()</span>
+    }
+
+    override suspend fun getMovieById(id: Int): Movie? {
+<span class="nc" id="L155">        return try {</span>
+<span class="nc" id="L156">            api.getMovieDetails(id).first().let(detailsDtoToEntityMapper).let(entityToDomainMapper)</span>
+<span class="nc" id="L157">        } catch (e: Exception) {</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">            dao.getMovieById(id)?.let(entityToDomainMapper)</span>
+        }
+    }
+
+    override suspend fun clearMovies() {
+<span class="nc" id="L163">        try {</span>
+<span class="nc" id="L164">            dao.clearMovies()</span>
+<span class="nc" id="L165">        } catch (e: Exception) {</span>
+<span class="nc" id="L166">            throw MovieApiException.CacheError(&quot;Failed to clear movies: ${e.message}&quot;)</span>
+        }
+<span class="nc" id="L168">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

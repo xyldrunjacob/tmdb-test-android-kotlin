@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.xyldrun.data.repository.MovieRepositoryImplTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2025-04-19T13:06:14" hostname="MACPH79K947HX" time="0.235">
+  <properties/>
+  <testcase name="refreshPopularMovies maintains data consistency during errors" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.184"/>
+  <testcase name="refreshPopularMovies handles server error without cached data" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.006"/>
+  <testcase name="getPopularMovies returns mapped movies from dao with correct mapping" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.005"/>
+  <testcase name="refreshPopularMovies handles offline state without cached data" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.006"/>
+  <testcase name="refreshPopularMovies handles concurrent requests properly" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.014"/>
+  <testcase name="refreshPopularMovies handles network transitions during refresh" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.009"/>
+  <testcase name="refreshPopularMovies handles server error with cached data" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.005"/>
+  <testcase name="refreshPopularMovies handles offline state with cached data" classname="com.xyldrun.data.repository.MovieRepositoryImplTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

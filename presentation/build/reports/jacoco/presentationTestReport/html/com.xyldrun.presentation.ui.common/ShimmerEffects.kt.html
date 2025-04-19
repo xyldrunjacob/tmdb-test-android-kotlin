@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShimmerEffects.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.ui.common</a> &gt; <span class="el_source">ShimmerEffects.kt</span></div><h1>ShimmerEffects.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.ui.common
+
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.valentinilk.shimmer.Shimmer
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
+import com.valentinilk.shimmer.shimmer
+
+@Composable
+fun MovieCardShimmer(
+<span class="nc bnc" id="L25" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L26" title="All 12 branches missed.">) {</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">    Card(</span>
+<span class="nc" id="L28">        modifier = modifier</span>
+<span class="nc" id="L29">            .fillMaxWidth()</span>
+<span class="nc" id="L30">            .shimmer()</span>
+<span class="nc" id="L31">    ) {</span>
+<span class="nc bnc" id="L32" title="All 6 branches missed.">        Column {</span>
+            // Poster placeholder
+<span class="nc" id="L34">            Box(</span>
+<span class="nc" id="L35">                modifier = Modifier</span>
+<span class="nc" id="L36">                    .fillMaxWidth()</span>
+<span class="nc" id="L37">                    .aspectRatio(2f/3f)</span>
+<span class="nc" id="L38">                    .background(MaterialTheme.colorScheme.surfaceVariant)</span>
+            )
+
+            // Content placeholders
+<span class="nc" id="L42">            Column(</span>
+<span class="nc" id="L43">                modifier = Modifier.padding(8.dp)</span>
+            ) {
+                // Title placeholder
+<span class="nc" id="L46">                Box(</span>
+<span class="nc" id="L47">                    modifier = Modifier</span>
+<span class="nc" id="L48">                        .fillMaxWidth(0.8f)</span>
+<span class="nc" id="L49">                        .height(20.dp)</span>
+<span class="nc" id="L50">                        .background(MaterialTheme.colorScheme.surfaceVariant)</span>
+                )
+                
+<span class="nc" id="L53">                Spacer(modifier = Modifier.height(8.dp))</span>
+                
+                // Date placeholder
+<span class="nc" id="L56">                Box(</span>
+<span class="nc" id="L57">                    modifier = Modifier</span>
+<span class="nc" id="L58">                        .fillMaxWidth(0.4f)</span>
+<span class="nc" id="L59">                        .height(16.dp)</span>
+<span class="nc" id="L60">                        .background(MaterialTheme.colorScheme.surfaceVariant)</span>
+                )
+<span class="nc" id="L62">            }</span>
+<span class="nc" id="L63">        }</span>
+<span class="nc" id="L64">    }</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">}</span>
+
+@Composable
+fun MovieGridShimmer(
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">    itemCount: Int = 6</span>
+<span class="nc bnc" id="L71" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L72">    Column(modifier = modifier) {</span>
+<span class="nc" id="L73">        Row(</span>
+<span class="nc" id="L74">            modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L75">            horizontalArrangement = Arrangement.spacedBy(16.dp)</span>
+        ) {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            repeat(2) { column -&gt;</span>
+<span class="nc" id="L78">                Column(</span>
+<span class="nc" id="L79">                    modifier = Modifier.weight(1f),</span>
+<span class="nc" id="L80">                    verticalArrangement = Arrangement.spacedBy(16.dp)</span>
+                ) {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                    repeat(itemCount / 2) {</span>
+<span class="nc" id="L83">                        MovieCardShimmer()</span>
+<span class="nc" id="L84">                    }</span>
+<span class="nc" id="L85">                }</span>
+<span class="nc" id="L86">            }</span>
+<span class="nc" id="L87">        }</span>
+<span class="nc" id="L88">    }</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">}</span>
+
+@Composable
+fun ShimmerMovieGrid(
+<span class="nc bnc" id="L93" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">    itemCount: Int = 10</span>
+<span class="nc bnc" id="L95" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L96">    val shimmerInstance = rememberShimmer(shimmerBounds = ShimmerBounds.Window)</span>
+    
+<span class="nc bnc" id="L98" title="All 2 branches missed.">    LazyVerticalGrid(</span>
+<span class="nc" id="L99">        columns = GridCells.Adaptive(minSize = 150.dp),</span>
+<span class="nc" id="L100">        contentPadding = PaddingValues(16.dp),</span>
+<span class="nc" id="L101">        horizontalArrangement = Arrangement.spacedBy(16.dp),</span>
+<span class="nc" id="L102">        verticalArrangement = Arrangement.spacedBy(16.dp),</span>
+<span class="nc" id="L103">        modifier = modifier.fillMaxSize()</span>
+    ) {
+<span class="nc" id="L105">        items(itemCount) { _ -&gt;</span>
+<span class="nc bnc" id="L106" title="All 8 branches missed.">            ShimmerMovieItem(shimmerInstance)</span>
+<span class="nc" id="L107">        }</span>
+<span class="nc" id="L108">    }</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L112" title="All 10 branches missed.">fun ShimmerMovieItem(shimmer: Shimmer) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">    Box(</span>
+<span class="nc" id="L114">        modifier = Modifier</span>
+<span class="nc" id="L115">            .fillMaxWidth()</span>
+<span class="nc" id="L116">            .aspectRatio(2f / 3f)</span>
+<span class="nc" id="L117">            .clip(RoundedCornerShape(8.dp))</span>
+<span class="nc" id="L118">            .shimmer(shimmer)</span>
+<span class="nc" id="L119">            .background(MaterialTheme.colorScheme.surfaceVariant)</span>
+    )
+<span class="nc bnc" id="L121" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L124" title="All 6 branches missed.">fun ShimmerEffect() {</span>
+<span class="nc" id="L125">    val shimmerColors = listOf(</span>
+<span class="nc" id="L126">        Color.LightGray.copy(alpha = 0.6f),</span>
+<span class="nc" id="L127">        Color.LightGray.copy(alpha = 0.2f),</span>
+<span class="nc" id="L128">        Color.LightGray.copy(alpha = 0.6f),</span>
+    )
+
+<span class="nc" id="L131">    val transition = rememberInfiniteTransition(label = &quot;shimmer&quot;)</span>
+<span class="nc" id="L132">    val translateAnim = transition.animateFloat(</span>
+<span class="nc" id="L133">        initialValue = 0f,</span>
+<span class="nc" id="L134">        targetValue = 1000f,</span>
+<span class="nc" id="L135">        animationSpec = infiniteRepeatable(</span>
+<span class="nc" id="L136">            animation = tween(durationMillis = 1000, easing = LinearEasing),</span>
+<span class="nc" id="L137">            repeatMode = RepeatMode.Restart</span>
+        ),
+<span class="nc" id="L139">        label = &quot;shimmer&quot;</span>
+    )
+
+<span class="nc" id="L142">    val brush = Brush.linearGradient(</span>
+<span class="nc" id="L143">        colors = shimmerColors,</span>
+<span class="nc" id="L144">        start = Offset.Zero,</span>
+<span class="nc" id="L145">        end = Offset(x = translateAnim.value, y = translateAnim.value)</span>
+    )
+
+<span class="nc bnc" id="L148" title="All 2 branches missed.">    ShimmerMovieGrid(</span>
+<span class="nc" id="L149">        modifier = Modifier.background(brush)</span>
+    )
+<span class="nc bnc" id="L151" title="All 2 branches missed.">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

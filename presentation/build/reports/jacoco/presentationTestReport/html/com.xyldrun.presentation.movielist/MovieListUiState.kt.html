@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieListUiState.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.movielist</a> &gt; <span class="el_source">MovieListUiState.kt</span></div><h1>MovieListUiState.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.movielist
+
+import com.xyldrun.domain.model.Movie
+
+sealed class MovieListUiState {
+<span class="fc" id="L6">    data object Loading : MovieListUiState()</span>
+    
+<span class="pc" id="L8">    data class Success(</span>
+<span class="fc" id="L9">        val movies: List&lt;Movie&gt;,</span>
+<span class="pc" id="L10">        val isLoadingMore: Boolean = false,</span>
+<span class="pc" id="L11">        val canLoadMore: Boolean = true,</span>
+<span class="pc" id="L12">        val loadMoreError: String? = null,</span>
+<span class="pc" id="L13">        val isShowingCached: Boolean = false,</span>
+<span class="pc" id="L14">        val isRefreshing: Boolean = false</span>
+<span class="pc" id="L15">    ) : MovieListUiState()</span>
+    
+<span class="pc" id="L17">    data class Error(</span>
+<span class="fc" id="L18">        val message: String,</span>
+<span class="pc" id="L19">        val isOffline: Boolean = false,</span>
+<span class="pc" id="L20">        val showingCached: Boolean = false</span>
+<span class="pc" id="L21">    ) : MovieListUiState()</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

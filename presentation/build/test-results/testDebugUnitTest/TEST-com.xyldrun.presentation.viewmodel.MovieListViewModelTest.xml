@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-04-19T13:06:10" hostname="MACPH79K947HX" time="1.378">
+  <properties/>
+  <testcase name="loadMovies shows cached data when network is unavailable" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="1.288"/>
+  <testcase name="loadMovies with forceRefresh resets state and loads fresh data" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.015"/>
+  <testcase name="network state changes trigger refresh when in error state" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.027"/>
+  <testcase name="loadMovies handles errors during refresh" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.007"/>
+  <testcase name="loadMovies handles network unavailability" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.007"/>
+  <testcase name="loadMovies handles errors during load more" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.009"/>
+  <testcase name="refresh method forces refresh of data" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.007"/>
+  <testcase name="retryLoadMore retries loading more data" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.005"/>
+  <testcase name="initial state is Loading and triggers initial load" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.007"/>
+  <testcase name="loadMovies without forceRefresh appends to existing data" classname="com.xyldrun.presentation.viewmodel.MovieListViewModelTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+</testsuite>

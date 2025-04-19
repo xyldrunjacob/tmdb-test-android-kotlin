@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.xyldrun.data.network.NetworkUtilsTest" tests="7" skipped="1" failures="0" errors="0" timestamp="2025-04-19T13:06:13" hostname="MACPH79K947HX" time="0.578">
+  <properties/>
+  <testcase name="isNetworkAvailable returns false when network has no internet capability" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.552"/>
+  <testcase name="isNetworkAvailable returns false when network is unavailable" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.003"/>
+  <testcase name="isNetworkAvailable returns true when network is available" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.008"/>
+  <testcase name="isNetworkAvailable handles null active network" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.002"/>
+  <testcase name="isNetworkAvailable returns false when NetworkCapabilities is null" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.006"/>
+  <testcase name="observeNetworkState emits network state changes" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <testcase name="isNetworkAvailable validates network capabilities properly" classname="com.xyldrun.data.network.NetworkUtilsTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

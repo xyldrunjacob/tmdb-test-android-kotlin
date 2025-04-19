@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KtorClient.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">data</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.data.remote</a> &gt; <span class="el_source">KtorClient.kt</span></div><h1>KtorClient.kt</h1><pre class="source lang-java linenums">package com.xyldrun.data.remote
+
+import android.util.Log
+import com.xyldrun.data.BuildConfig
+import com.xyldrun.data.remote.error.MovieApiException
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.headers
+import io.ktor.client.request.parameter
+import io.ktor.http.URLProtocol
+import io.ktor.http.path
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+
+object KtorClient {
+    private const val TIMEOUT = 60_000L
+    private const val HOST = &quot;api.themoviedb.org&quot;
+    const val API_VERSION = &quot;3&quot;
+    private const val TAG = &quot;KtorClient&quot;
+
+<span class="nc" id="L32">    val client = HttpClient(Android) {</span>
+<span class="nc" id="L33">        install(ContentNegotiation) {</span>
+<span class="nc" id="L34">            json(Json {</span>
+<span class="nc" id="L35">                ignoreUnknownKeys = true</span>
+<span class="nc" id="L36">                isLenient = true</span>
+<span class="nc" id="L37">                encodeDefaults = true</span>
+<span class="nc" id="L38">            })</span>
+<span class="nc" id="L39">        }</span>
+        
+<span class="nc" id="L41">        install(Logging) {</span>
+<span class="nc" id="L42">            logger = object : Logger {</span>
+                override fun log(message: String) {
+<span class="nc" id="L44">                    Log.d(TAG, message)</span>
+<span class="nc" id="L45">                }</span>
+            }
+<span class="nc" id="L47">            level = LogLevel.ALL</span>
+<span class="nc" id="L48">        }</span>
+        
+<span class="nc" id="L50">        install(HttpTimeout) {</span>
+<span class="nc" id="L51">            requestTimeoutMillis = TIMEOUT</span>
+<span class="nc" id="L52">            connectTimeoutMillis = TIMEOUT / 4</span>
+<span class="nc" id="L53">            socketTimeoutMillis = TIMEOUT / 4</span>
+<span class="nc" id="L54">        }</span>
+        
+<span class="nc" id="L56">        defaultRequest {</span>
+<span class="nc" id="L57">            url {</span>
+<span class="nc" id="L58">                protocol = URLProtocol.HTTPS</span>
+<span class="nc" id="L59">                host = HOST</span>
+<span class="nc" id="L60">                port = 443</span>
+<span class="nc" id="L61">                path(API_VERSION)</span>
+<span class="nc" id="L62">            }</span>
+            
+<span class="nc" id="L64">            Log.d(TAG, &quot;API Key: ${BuildConfig.TMDB_API_KEY}&quot;)</span>
+<span class="nc" id="L65">            headers {</span>
+<span class="nc" id="L66">                append(&quot;Authorization&quot;, &quot;Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTU3Njk5OWRmYzQ5NjkyZDkwMjYxNTViNDc1ZTYzOSIsIm5iZiI6MTc0NDEyMDk4Ni41MzEwMDAxLCJzdWIiOiI2N2Y1MmM5YTZjMzU4M2M5NzU5OTdmNjkiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.n-GTA-Zh5J7D8zt3xOcQCmE-p0EVNHso726dJfy6gR4&quot;)</span>
+<span class="nc" id="L67">                append(&quot;Accept&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L68">                append(&quot;Content-Type&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L69">            }</span>
+<span class="nc" id="L70">        }</span>
+        
+<span class="nc" id="L72">        HttpResponseValidator {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            validateResponse { response -&gt;</span>
+<span class="nc" id="L74">                Log.d(TAG, &quot;Response status: ${response.status}&quot;)</span>
+<span class="nc" id="L75">                when (response.status.value) {</span>
+<span class="nc bnc" id="L76" title="All 6 branches missed.">                    in 300..399 -&gt; throw RedirectResponseException(response, &quot;Redirect response: ${response.status}&quot;)</span>
+<span class="nc bnc" id="L77" title="All 6 branches missed.">                    in 400..499 -&gt; {</span>
+<span class="nc bnc" id="L78" title="All 4 branches missed.">                        val message = when (response.status.value) {</span>
+<span class="nc" id="L79">                            401 -&gt; &quot;Invalid API key. Please check your configuration.&quot;</span>
+<span class="nc" id="L80">                            404 -&gt; &quot;Resource not found&quot;</span>
+<span class="nc" id="L81">                            429 -&gt; &quot;Rate limit exceeded&quot;</span>
+<span class="nc" id="L82">                            else -&gt; &quot;Client request error: ${response.status}&quot;</span>
+                        }
+<span class="nc" id="L84">                        throw ClientRequestException(response, message)</span>
+                    }
+<span class="nc bnc" id="L86" title="All 6 branches missed.">                    in 500..599 -&gt; throw ServerResponseException(response, &quot;Server error: ${response.status}&quot;)</span>
+                }
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                if (response.status.value &gt;= 600) {</span>
+<span class="nc" id="L89">                    throw ResponseException(response, &quot;Unexpected response: ${response.status}&quot;)</span>
+                }
+<span class="nc" id="L91">            }</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            handleResponseExceptionWithRequest { cause, request -&gt;</span>
+<span class="nc" id="L93">                Log.e(TAG, &quot;Request failed: ${request.url}, error: ${cause.message}&quot;)</span>
+<span class="nc" id="L94">                throw when (cause) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                    is ClientRequestException -&gt; MovieApiException.ClientError(cause.message)</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                    is ServerResponseException -&gt; MovieApiException.ServerError(cause.message)</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                    else -&gt; MovieApiException.UnknownError(cause.message ?: &quot;Unknown error occurred&quot;)</span>
+                }
+            }
+<span class="nc" id="L100">        }</span>
+<span class="nc" id="L101">    }</span>
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,37 @@
+@startuml Test Coverage
+!theme plain
+skinparam linetype ortho
+
+package "Presentation Tests" {
+    [MovieListViewModelTest]
+    [MovieListScreenTest]
+}
+
+package "Domain Tests" {
+    [GetPopularMoviesUseCaseTest]
+    [RefreshMoviesUseCaseTest]
+}
+
+package "Data Tests" {
+    [MovieRepositoryImplTest]
+    [MovieApiTest]
+    [MovieDaoTest]
+}
+
+package "Core Tests" {
+    [NetworkMonitorTest]
+}
+
+[MovieListViewModelTest] --> [GetPopularMoviesUseCaseTest]
+[MovieListViewModelTest] --> [RefreshMoviesUseCaseTest]
+[MovieListViewModelTest] --> [NetworkMonitorTest]
+
+[GetPopularMoviesUseCaseTest] --> [MovieRepositoryImplTest]
+[RefreshMoviesUseCaseTest] --> [MovieRepositoryImplTest]
+
+[MovieRepositoryImplTest] --> [MovieApiTest]
+[MovieRepositoryImplTest] --> [MovieDaoTest]
+
+[MovieListScreenTest] --> [MovieListViewModelTest]
+
+@enduml 

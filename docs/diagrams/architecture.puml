@@ -1,0 +1,64 @@
+@startuml Architecture
+!theme plain
+skinparam linetype ortho
+
+package "App" {
+    [MainActivity]
+    [MovieListScreen]
+    [MovieDetailsScreen]
+}
+
+package "Presentation" {
+    [MovieListViewModel]
+    [MovieDetailsViewModel]
+    [MovieListUiState]
+    [MovieDetailsUiState]
+}
+
+package "Domain" {
+    [Movie]
+    [MovieRepository]
+    [GetPopularMoviesUseCase]
+    [RefreshMoviesUseCase]
+    [GetMovieDetailsUseCase]
+}
+
+package "Data" {
+    [MovieRepositoryImpl]
+    [MovieApi]
+    [MovieDao]
+    [MovieDatabase]
+}
+
+package "Core" {
+    [NetworkMonitor]
+    [Logger]
+    [MovieApiException]
+}
+
+[MainActivity] --> [MovieListScreen]
+[MainActivity] --> [MovieDetailsScreen]
+
+[MovieListScreen] --> [MovieListViewModel]
+[MovieDetailsScreen] --> [MovieDetailsViewModel]
+
+[MovieListViewModel] --> [GetPopularMoviesUseCase]
+[MovieListViewModel] --> [RefreshMoviesUseCase]
+[MovieDetailsViewModel] --> [GetMovieDetailsUseCase]
+
+[GetPopularMoviesUseCase] --> [MovieRepository]
+[RefreshMoviesUseCase] --> [MovieRepository]
+[GetMovieDetailsUseCase] --> [MovieRepository]
+
+[MovieRepositoryImpl] ..|> [MovieRepository]
+[MovieRepositoryImpl] --> [MovieApi]
+[MovieRepositoryImpl] --> [MovieDao]
+[MovieRepositoryImpl] --> [NetworkMonitor]
+
+[MovieApi] --> [NetworkMonitor]
+[MovieApi] --> [Logger]
+[MovieApi] --> [MovieApiException]
+
+[MovieDao] --> [MovieDatabase]
+
+@enduml 

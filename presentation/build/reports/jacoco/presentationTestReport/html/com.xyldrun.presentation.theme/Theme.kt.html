@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Theme.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.theme</a> &gt; <span class="el_source">Theme.kt</span></div><h1>Theme.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.theme
+
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+
+@Composable
+fun MovieAppTheme(
+<span class="nc bnc" id="L11" title="All 2 branches missed.">    darkTheme: Boolean = isSystemInDarkTheme(),</span>
+<span class="nc bnc" id="L12" title="All 4 branches missed.">    dynamicColor: Boolean = true,</span>
+    content: @Composable () -&gt; Unit
+<span class="nc bnc" id="L14" title="All 28 branches missed.">) {</span>
+<span class="nc" id="L15">    val colorScheme = when {</span>
+<span class="nc bnc" id="L16" title="All 4 branches missed.">        dynamicColor &amp;&amp; Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.S -&gt; {</span>
+<span class="nc" id="L17">            val context = LocalContext.current</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">            if (darkTheme) dynamicDarkColorScheme(context)</span>
+<span class="nc" id="L19">            else dynamicLightColorScheme(context)</span>
+        }
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        darkTheme -&gt; darkColorScheme()</span>
+<span class="nc" id="L22">        else -&gt; lightColorScheme()</span>
+    }
+
+<span class="nc bnc" id="L25" title="All 2 branches missed.">    MaterialTheme(</span>
+<span class="nc" id="L26">        colorScheme = colorScheme,</span>
+<span class="nc" id="L27">        typography = Typography,</span>
+<span class="nc" id="L28">        content = content</span>
+    )
+<span class="nc bnc" id="L30" title="All 2 branches missed.">} </span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_retry">Retry</string>
+    <string name="error_database">Database error occurred</string>
+    <string name="error_network">Network error occurred</string>
+    <string name="error_unknown">An unknown error occurred</string>
+    <string name="network_error_showing_cached">Network error - showing cached content</string>
+    <string name="no_movies_found">No movies found</string>
+    <string name="offline_message">You are currently offline</string>
+    <string name="retry">Retry</string>
+    <string name="showing_cached_content">Showing cached content</string>
+</resources>

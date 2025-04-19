@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieImageLoader.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">presentation</a> &gt; <a href="index.source.html" class="el_package">com.xyldrun.presentation.ui.common</a> &gt; <span class="el_source">MovieImageLoader.kt</span></div><h1>MovieImageLoader.kt</h1><pre class="source lang-java linenums">package com.xyldrun.presentation.ui.common
+
+import android.content.Context
+import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.util.DebugLogger
+import com.xyldrun.domain.model.Movie
+
+<span class="nc" id="L12">class MovieImageLoader(</span>
+<span class="nc" id="L13">    private val context: Context</span>
+) {
+<span class="nc" id="L15">    private val imageLoader = ImageLoader.Builder(context)</span>
+<span class="nc" id="L16">        .memoryCache {</span>
+<span class="nc" id="L17">            MemoryCache.Builder(context)</span>
+<span class="nc" id="L18">                .maxSizePercent(0.25) // Use 25% of app memory for image cache</span>
+<span class="nc" id="L19">                .build()</span>
+        }
+<span class="nc" id="L21">        .diskCache {</span>
+<span class="nc" id="L22">            DiskCache.Builder()</span>
+<span class="nc" id="L23">                .directory(context.cacheDir.resolve(&quot;image_cache&quot;))</span>
+<span class="nc" id="L24">                .maxSizePercent(0.02) // Use 2% of disk space</span>
+<span class="nc" id="L25">                .build()</span>
+        }
+<span class="nc" id="L27">        .networkCachePolicy(CachePolicy.ENABLED)</span>
+<span class="nc" id="L28">        .diskCachePolicy(CachePolicy.ENABLED)</span>
+<span class="nc" id="L29">        .memoryCachePolicy(CachePolicy.ENABLED)</span>
+<span class="nc" id="L30">        .logger(DebugLogger())</span>
+<span class="nc" id="L31">        .respectCacheHeaders(true)</span>
+<span class="nc" id="L32">        .crossfade(CROSSFADE_DURATION)</span>
+<span class="nc" id="L33">        .build()</span>
+
+    fun preloadImages(movies: List&lt;Movie&gt;) {
+<span class="nc" id="L36">        movies.forEach { movie -&gt;</span>
+<span class="nc bnc" id="L37" title="All 6 branches missed.">            movie.posterPath.takeIf { it.isNotBlank() }?.let { path -&gt;</span>
+<span class="nc" id="L38">                preloadImage(path, ImageType.POSTER_SMALL)</span>
+<span class="nc" id="L39">                preloadImage(path, ImageType.POSTER_LARGE)</span>
+<span class="nc" id="L40">            }</span>
+<span class="nc bnc" id="L41" title="All 6 branches missed.">            movie.backdropPath.takeIf { it.isNotBlank() }?.let { path -&gt;</span>
+<span class="nc" id="L42">                preloadImage(path, ImageType.BACKDROP_SMALL)</span>
+<span class="nc" id="L43">                preloadImage(path, ImageType.BACKDROP_LARGE)</span>
+<span class="nc" id="L44">            }</span>
+<span class="nc" id="L45">        }</span>
+<span class="nc" id="L46">    }</span>
+
+    private fun preloadImage(path: String, type: ImageType) {
+<span class="nc" id="L49">        val request = buildImageRequest(path, type)</span>
+<span class="nc" id="L50">        imageLoader.enqueue(request)</span>
+<span class="nc" id="L51">    }</span>
+
+    fun buildImageRequest(path: String?, type: ImageType): ImageRequest {
+<span class="nc" id="L54">        return ImageRequest.Builder(context)</span>
+<span class="nc" id="L55">            .data(buildImageUrl(path, type))</span>
+<span class="nc" id="L56">            .size(type.width, type.height)</span>
+<span class="nc" id="L57">            .memoryCacheKey(path)</span>
+<span class="nc" id="L58">            .diskCacheKey(path)</span>
+<span class="nc" id="L59">            .crossfade(true)</span>
+<span class="nc" id="L60">            .build()</span>
+    }
+
+    private fun buildImageUrl(path: String?, type: ImageType): String? {
+<span class="nc bnc" id="L64" title="All 6 branches missed.">        if (path.isNullOrBlank()) return null</span>
+<span class="nc" id="L65">        return &quot;https://image.tmdb.org/t/p/${type.size}$path&quot;</span>
+    }
+
+    fun loadPosterImage(posterPath: String): String {
+<span class="nc" id="L69">        return &quot;$TMDB_IMAGE_URL$posterPath&quot;</span>
+    }
+
+    fun loadBackdropImage(backdropPath: String): String {
+<span class="nc" id="L73">        return &quot;$TMDB_IMAGE_URL$backdropPath&quot;</span>
+    }
+
+<span class="nc" id="L76">    enum class ImageType(val size: String, val width: Int, val height: Int) {</span>
+<span class="nc" id="L77">        POSTER_SMALL(&quot;w342&quot;, 342, 513),</span>
+<span class="nc" id="L78">        POSTER_LARGE(&quot;w780&quot;, 780, 1170),</span>
+<span class="nc" id="L79">        BACKDROP_SMALL(&quot;w780&quot;, 780, 439),</span>
+<span class="nc" id="L80">        BACKDROP_LARGE(&quot;w1280&quot;, 1280, 720)</span>
+    }
+
+    companion object {
+        private const val CROSSFADE_DURATION = 300
+        private const val TMDB_IMAGE_URL = &quot;https://image.tmdb.org/t/p/original&quot;
+
+        fun getImageUrl(path: String, type: ImageType): String {
+<span class="nc" id="L88">            return &quot;https://image.tmdb.org/t/p/${type.size}$path&quot;</span>
+        }
+    }
+} 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
