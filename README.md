@@ -117,7 +117,7 @@ Important: Make sure to run the tests first (Step 1) before attempting to genera
 - Kotlin Coroutines
 - Jetpack Compose
 - Room Database
-- Retrofit
+- Ktor
 - Material 3
 - Coil
 - Koin
